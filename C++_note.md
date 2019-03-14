@@ -47,6 +47,20 @@
             1. <font color=red>列表初始化可能是一个精确初始化，不可以以丢失精确度的代价来强制转换。</font>
 
     4. 声明
+
+	5. const 限定符
+		1. const 对象尽在文件内有效,除非声明和定义都加上extern
+		2. 引用类型必须与其所对引用的对象类型一致,但有两个例外:
+			1. const int &i = (double) 2.3
+				1. 在初始化常量引用时允许任意表达式作为初始值,只要该表达式的结果能转换为引用类型即可
+				2. 
+					1. 例子
+					
+							double dval = 3.14;
+							cons int &ri = dval;
+
+							const int temp = dval;
+							const int &ri = temp;
 ### 2. 基本语法
 ### 3. 主要语言构造
 
