@@ -1,6 +1,9 @@
 # 快速掌握一个语言的50%: C++
 <font color=red></font>
 <font color=green></font>
+## 问题
+1. 有了auto为什么还需要decltype
+    1. auto只能让编译器确定变量的类型，而decltype可以确定一种类型来定义变量。
 
 ## 一. 基础
 ### 1. 基本类型
@@ -37,6 +40,7 @@
         - int units_sold = {0}; 
         - int units_sold(0);
         - int units_sold{0};
+
     3. 列表初始化：
         1. 当用于内置类型的变量时，这种初始化形式有一个重要特点：如果我们使用列表初始化且初始值存在丢失信息的风险，则编译器报错。
             
@@ -172,9 +176,122 @@
 
                 1. 切记：decltype((variable)) (双层括号) 的结果永远是引用，而decltype(variable) 结果只有当variable本身就是一个引用时才是引用。
 
-
->>>>>>> ec375eb5501af82392cfc37c8454889efe6c8442
 ### 2. 基本语法
+
+1. 强制类型转换
+    1. 形式：  cast-name<type>(expression);
+    2. cast-name:
+        1. static_cast
+            > 任何具有名确定义的类型转换，只要不包括底层const，都可以使用static_const。
+
+        2. dynamic_cast
+            > 运行时类型识别
+
+        3. const_cast
+            > const_cast 只能改变运算对象的底层const
+
+            1. 去掉const性质
+                    
+                    const  char *pc;
+                    char *p = const_cast<char *>(pc);   //正确：但是通过p写值是未定义的行为。
+
+            2. const_cast不能改变表达式的类型，这时static_cast来改变的。const_cast能改变表达式的常量属性。
+
+        4. reinterpret_cast
+            > 通常为运算对象的位模式提供较低层上的重新解释。
+
+            1. eg
+
+                    int *ip;
+                    char *pc = reinterpret_cast<char *>(ip);
+
+                    我们必须牢记pc所指的真实对象是一个int而非字符，如果把pc当成普通的字符指针使用就可能在运行时发生错误。
+
+                    string str(pc) // 或导致运行时错误。
+
+2. 循环
+
+    1. switch case中
+        1. case标签必须是整形常量表达式。
+
+                char ch = getVal();
+                int ival = 34;
+                switch(ch){
+                    case 3.24; //错误：case标签不是一个整数
+                    case ival; //错误：case标签不是一个常量
+                }
+
+        2.  标签不应该孤零零出现，它后面必须跟上一条语句或者另外一个case标签。
+
+    2. for 语句中的init-statement可以定义多个对象，但是只能有一条声明语句，因此，所有变量的基础类型必须相同。相当于一个类型定义了多个变量。
+
+            for (decltype(v.size()) i = 0, sz = v.size(); i != sz; ++i)
+                v.push_back(v[i]);
+
+    3. 范围for
+        > C++11定义，可以遍历容器或其他序列的所有元素
+
+        1. 形式
+                
+                for (declaration : expression)
+                    statement
+        
+        2. expression:必须是一个序列，比如用花括号括起来的初始值列表、数组、vector、string等，这些类型的共同特点是能返回迭代器的begin和end成员。
+
+        3. declaration定义一个变量
+            1. 最简单用auto类型说明符来说明变量类型。
+            2. 如果需要对序列中的元素执行写操作，循环变量必须声明成引用类型。
+
+    4. 跳转语句
+        1. break；负责终止离它最近的while、do while、for或switch语句。
+            > break语句只能出现在迭代语句或者switch语句内部。
+
+        2. continue：终止最近的循环中的当前迭代并立即开始下一次迭代。
+
+        3. goto：从goto语句无条件跳转到统一函数内的另一条语句。
+            > 不要在程序中使用goto
+
+            1. 形式： goto label；
+            2. 和switch语句类似，goto语句也不能将程序的控制权从变量的作用域之外转移到作用域之内。
+
+            > 不要在程序中使用goto
+
+            1. 形式： goto label；
+            2. 和switch语句类似，goto语句也不能将程序的控制权从变量的作用域之外转移到作用域之内。
+                        > 不要在程序中使用goto
+
+           
+                        1. 形式： goto label；
+                        2. 和switch语句类似，goto语句也不能将程序的控制权从变量的作用域之外转移到作用域之内。
+                                    > 不要在程序中使用goto
+
+                       
+                                    1. 形式： goto label；
+                                    2. 和switch语句类似，goto语句也不能将程序的控制权从变量的作用域之外转移到作用域之内。
+
+3. 异常
+    1. throw表达式：
+        1. 形式：throw + 表达式，表达式的类型是抛出的异常类型。
+
+                if (item1.isbn() != item2.isbn())
+                    throw runtime_error("Data must refer to same ISBN");
+
+        2. runtime_error:标准库异常类型的一种，定义在stdexcept头文件中。string对象初始化它。
+        
+    2. try 语句块：
+        1. 形式：try 块之后是一个或多个catch子句。catch子句包括三部分：关键字 catch、括号内一个(可能是未命名)对象的声明(异常声明)、以及一个块。
+
+                try {
+                    program-statements;
+                } catch (exception-declaration){
+                    handler-statements;
+                } catch (exception-declaration){
+                    handler-statements;
+                }
+
+    3. 一套异常类，用于在throw表达式和相关的catch子句之间传递:
+        1. 异常类只定义了一个名为what的成员函数，没有参数，返回只是一个指向C字符串的 const char *.
+
 ### 3. 主要语言构造
 
 ## 二.高级数据结构 
