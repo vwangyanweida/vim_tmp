@@ -249,6 +249,7 @@
 
 8. 输入越界
     1. <font color=red>再把字符读入数组时，scanf和gets都无法检测数组何时被填满，scanf可以通过%ns替换%s来制定可以存储的最多的字符数。但gets天生不安全，fgets函数则是一种好选择</font>
+
 9. 逐个字符读字符串。
     
         int read_line(char str[], int n){
